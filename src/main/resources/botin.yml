@@ -1,0 +1,66 @@
+# ============================================================
+#  Tablas de botin
+#
+#  tiradas:      cuantos items se intentan sacar (puede ser "2-5")
+#  peso:         probabilidad relativa dentro de la tabla (mas peso = mas comun)
+#  probabilidad: filtro extra 0.0-1.0 que se aplica DESPUES de salir elegido
+#  cantidad:     numero fijo ("3") o rango ("1-4")
+#
+#  Un item puede ser:
+#    material: DIAMOND          -> item vanilla
+#    mythic: EspadaDeFuego      -> item de MythicMobs por su nombre interno
+# ============================================================
+
+tablas:
+
+  comun:
+    tiradas: 3-6
+    items:
+      - material: IRON_INGOT
+        cantidad: 2-6
+        peso: 30
+      - material: BREAD
+        cantidad: 1-4
+        peso: 25
+      - material: GOLD_INGOT
+        cantidad: 1-3
+        peso: 15
+      - material: EMERALD
+        cantidad: 1-2
+        peso: 8
+      - material: DIAMOND
+        cantidad: 1-2
+        peso: 4
+      # Ejemplo de item personalizado vanilla con nombre y lore (MiniMessage)
+      - material: PAPER
+        cantidad: 1
+        peso: 6
+        nombre: "<gold>Mapa roto</gold>"
+        lore:
+          - "<gray>Apenas se distingue una ruta.</gray>"
+      # Item de MythicMobs
+      - mythic: HealingPotion
+        cantidad: 1-2
+        peso: 10
+        probabilidad: 0.6
+
+  raro:
+    tiradas: 2-4
+    items:
+      - material: DIAMOND
+        cantidad: 2-5
+        peso: 20
+      - material: NETHERITE_SCRAP
+        cantidad: 1-2
+        peso: 6
+      - material: ENCHANTED_GOLDEN_APPLE
+        cantidad: 1
+        peso: 3
+      - mythic: EspadaDeFuego
+        cantidad: 1
+        peso: 4
+        probabilidad: 0.35
+      - mythic: ArmaduraDelOlvido
+        cantidad: 1
+        peso: 2
+        probabilidad: 0.2

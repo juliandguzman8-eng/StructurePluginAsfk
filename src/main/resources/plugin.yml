@@ -1,0 +1,19 @@
+name: EstructurasAleatorias
+version: '${project.version}'
+main: com.ejemplo.estructuras.EstructurasPlugin
+api-version: '1.21'
+authors: [TuNombre]
+description: Genera estructuras (.schem) aleatorias por el mundo, con botin y mobs de MythicMobs.
+softdepend: [WorldEdit, FastAsyncWorldEdit, MythicMobs]
+
+commands:
+  estructuras:
+    description: Comandos de EstructurasAleatorias.
+    usage: /estructuras <recargar|lista|info|aqui|pegar|limpiar>
+    aliases: [ea, estr]
+    permission: estructuras.admin
+
+permissions:
+  estructuras.admin:
+    description: Acceso a los comandos de administracion.
+    default: op

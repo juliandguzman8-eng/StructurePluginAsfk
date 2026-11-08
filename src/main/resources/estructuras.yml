@@ -1,0 +1,129 @@
+# ============================================================
+#  Definicion de estructuras
+#  Cada clave bajo "estructuras:" es un ID que usas en los comandos.
+# ============================================================
+
+estructuras:
+
+  torre_abandonada:
+    activa: true
+    # Nombre del archivo dentro de plugins/EstructurasAleatorias/schematics/
+    archivo: torre_abandonada.schem
+
+    # Probabilidad POR CHUNK nuevo generado. 0.004 = 0.4% de los chunks.
+    # Ojo: 0.01 ya es muchisimo. Empieza bajo y sube.
+    probabilidad: 0.004
+
+    # Mundos donde puede salir (si esta vacio usa los de config.yml)
+    mundos:
+      - world
+
+    # Biomas permitidos (nombres sin "minecraft:"). Vacio = todos.
+    biomas:
+      - plains
+      - forest
+      - savanna
+
+    # Altura minima y maxima a la que se acepta la superficie
+    y-minimo: 55
+    y-maximo: 140
+
+    # Desplazamiento vertical tras encontrar la superficie.
+    # -1 entierra la estructura un bloque (util para que no "flote" la base).
+    offset-y: -1
+
+    # Punto de anclaje del schematic:
+    #   ORIGEN = donde estabas parado al copiarlo
+    #   CENTRO = centro de la base del schematic (lo mas comodo normalmente)
+    ancla: CENTRO
+
+    # Rota 0/90/180/270 grados al azar
+    rotacion-aleatoria: true
+
+    # No pega los bloques de aire del schematic (deja el terreno que ya habia)
+    ignorar-aire: true
+
+    # Pega tambien las entidades guardadas en el schematic (item frames, armor stands...)
+    pegar-entidades: true
+
+    # Distancia minima entre DOS copias de ESTA estructura
+    distancia-minima: 600
+
+    # Desnivel maximo permitido entre las esquinas del terreno (en bloques).
+    # Si el suelo es mas irregular que esto, se descarta el sitio.
+    desnivel-maximo: 4
+
+    # No generar si la superficie es agua o lava
+    evitar-liquidos: true
+
+    # ---- Cofres ----
+    cofres:
+      # Tabla de botin por defecto para cualquier contenedor de la estructura
+      tabla: comun
+      # Rellena tambien cofres que ya traian items en el schematic
+      vaciar-antes: true
+      # Tabla distinta segun el bloque que pongas DEBAJO del cofre en el schematic.
+      # Ese bloque se reemplaza despues por el indicado en "reemplazo".
+      tablas-por-bloque:
+        GOLD_BLOCK:
+          tabla: raro
+          reemplazo: STONE_BRICKS
+        IRON_BLOCK:
+          tabla: comun
+          reemplazo: STONE_BRICKS
+
+    # ---- Marcadores de mobs de MythicMobs ----
+    # Pon estos bloques en el schematic donde quieras que aparezcan mobs.
+    # El bloque se borra (se pone "reemplazo") y se spawnea el mob.
+    marcadores-mobs:
+      RED_WOOL:
+        mob: SkeletalKnight
+        nivel: 1
+        cantidad: 1-2
+        probabilidad: 0.8
+        reemplazo: AIR
+      ORANGE_WOOL:
+        mob: BanditLeader
+        nivel: 3
+        cantidad: 1
+        probabilidad: 0.35
+        reemplazo: AIR
+
+    # ---- Marcadores de spawners ----
+    # El bloque se convierte en un spawner vanilla "marcado": cuando intenta
+    # generar un mob, el plugin cancela el spawn vanilla y pone el MythicMob.
+    marcadores-spawners:
+      LIME_WOOL:
+        mob: SkeletalKnight
+        nivel: 1
+        probabilidad: 1.0
+        delay-minimo: 300          # ticks
+        delay-maximo: 700
+        cantidad-por-tanda: 2
+        rango-jugador: 16
+        maximo-cercanos: 6
+        rango-spawn: 4
+
+  cripta:
+    activa: false
+    archivo: cripta.schem
+    probabilidad: 0.0015
+    mundos:
+      - world
+    biomas: []
+    y-minimo: 40
+    y-maximo: 90
+    offset-y: -6
+    ancla: CENTRO
+    rotacion-aleatoria: true
+    ignorar-aire: false
+    pegar-entidades: true
+    distancia-minima: 900
+    desnivel-maximo: 6
+    evitar-liquidos: true
+    cofres:
+      tabla: raro
+      vaciar-antes: true
+      tablas-por-bloque: {}
+    marcadores-mobs: {}
+    marcadores-spawners: {}

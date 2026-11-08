@@ -1,0 +1,32 @@
+# ============================================================
+#  EstructurasAleatorias - configuracion general
+#  Las estructuras se definen en estructuras.yml
+#  El botin se define en botin.yml
+#  Los .schem van en plugins/EstructurasAleatorias/schematics/
+# ============================================================
+
+general:
+  # Si esta en false no se genera nada automaticamente (los comandos siguen funcionando).
+  generacion-automatica: true
+
+  # Mundos donde se puede generar. Si esta vacio, se usa lo que diga cada estructura.
+  # Cada estructura puede restringirlo mas en estructuras.yml.
+  mundos-permitidos:
+    - world
+
+  # Distancia minima (en bloques) entre DOS estructuras cualesquiera.
+  # Cada estructura puede exigir ademas su propia distancia minima consigo misma.
+  distancia-minima-global: 200
+
+  # Cuantos bloques revisa el escaner por tick al buscar cofres/marcadores.
+  # Bajalo si notas lag al generar estructuras grandes.
+  bloques-por-tick: 6000
+
+  # Volumen maximo de un schematic (en bloques). Protege de pegar algo gigante por error.
+  volumen-maximo: 1500000
+
+  # Mensajes extra en consola para depurar (muy util al configurar).
+  debug: false
+
+  # Cada cuantos minutos se guarda el registro de estructuras ya colocadas.
+  guardado-automatico-minutos: 5
