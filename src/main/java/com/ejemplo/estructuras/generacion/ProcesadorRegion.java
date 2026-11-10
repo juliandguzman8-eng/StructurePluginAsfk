@@ -1,5 +1,5 @@
 package com.ejemplo.estructuras.generacion;
-
+ 
 import com.ejemplo.estructuras.EstructurasPlugin;
 import com.ejemplo.estructuras.modelo.EstructuraDef;
 import com.ejemplo.estructuras.modelo.MarcadorMob;
@@ -16,29 +16,28 @@ import org.bukkit.block.Container;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
-
+ 
 import java.util.Random;
-
+ 
 /**
  * Recorre la caja de la estructura recien pegada, por tandas para no causar lag,
  * y convierte marcadores en mobs/spawners y rellena los contenedores con botin.
  */
 public class ProcesadorRegion extends BukkitRunnable {
-
+ 
     private final EstructurasPlugin plugin;
     private final EstructuraDef def;
     private final World mundo;
     private final int xMin, yMin, zMin, xMax, yMax, zMax;
     private final int porTick;
     private final Random random = new Random();
-
+ 
     private int x, y, z;
     private int cofres = 0;
     private int mobs = 0;
     private int spawners = 0;
-
+ 
     public ProcesadorRegion(EstructurasPlugin plugin, EstructuraDef def, World mundo,
                             int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
         this.plugin = plugin;
@@ -55,7 +54,7 @@ public class ProcesadorRegion extends BukkitRunnable {
         this.y = this.yMin;
         this.z = this.zMin;
     }
-
+ 
     @Override
     public void run() {
         int procesados = 0;
@@ -71,7 +70,7 @@ public class ProcesadorRegion extends BukkitRunnable {
             procesados++;
         }
     }
-
+ 
     private void avanzar() {
         x++;
         if (x > xMax) {
@@ -83,7 +82,7 @@ public class ProcesadorRegion extends BukkitRunnable {
             }
         }
     }
-
+ 
     private void terminar() {
         cancel();
         if (plugin.debug()) {
@@ -91,14 +90,14 @@ public class ProcesadorRegion extends BukkitRunnable {
                     + mobs + " mobs, " + spawners + " spawners.");
         }
     }
-
+ 
     private void procesar(int bx, int by, int bz) {
         Block bloque = mundo.getBlockAt(bx, by, bz);
         Material material = bloque.getType();
         if (material.isAir()) {
             return;
         }
-
+ 
         MarcadorMob marcadorMob = def.marcadoresMobs.get(material);
         if (marcadorMob != null) {
             bloque.setType(marcadorMob.reemplazo, false);
@@ -113,7 +112,7 @@ public class ProcesadorRegion extends BukkitRunnable {
             }
             return;
         }
-
+ 
         MarcadorSpawner marcadorSpawner = def.marcadoresSpawners.get(material);
         if (marcadorSpawner != null) {
             if (random.nextDouble() <= marcadorSpawner.probabilidad) {
@@ -124,22 +123,22 @@ public class ProcesadorRegion extends BukkitRunnable {
             }
             return;
         }
-
+ 
         if (esContenedor(material)) {
             rellenarContenedor(bloque, bx, by, bz);
         }
     }
-
+ 
     private boolean esContenedor(Material material) {
         return material == Material.CHEST
                 || material == Material.TRAPPED_CHEST
                 || material == Material.BARREL
                 || Tag.SHULKER_BOXES.isTagged(material);
     }
-
+ 
     private void rellenarContenedor(Block bloque, int bx, int by, int bz) {
         String tabla = def.tablaCofres;
-
+ 
         // Tabla distinta segun el bloque marcador que haya debajo
         if (by - 1 >= mundo.getMinHeight() && !def.tablasPorBloque.isEmpty()) {
             Block abajo = mundo.getBlockAt(bx, by - 1, bz);
@@ -150,11 +149,11 @@ public class ProcesadorRegion extends BukkitRunnable {
                 abajo.setType(reemplazo, false);
             }
         }
-
+ 
         if (tabla == null) {
             return;
         }
-
+ 
         BlockState estado = bloque.getState(false);
         if (!(estado instanceof Container contenedor)) {
             return;
@@ -163,29 +162,24 @@ public class ProcesadorRegion extends BukkitRunnable {
         Inventory inventario = (contenedor instanceof Chest cofre)
                 ? cofre.getBlockInventory()
                 : contenedor.getInventory();
-
+ 
         plugin.botin().rellenar(inventario, tabla, def.vaciarCofres);
         cofres++;
     }
-
+ 
     private void colocarSpawner(Block bloque, MarcadorSpawner marcador) {
         bloque.setType(Material.SPAWNER, false);
-        BlockState estado = bloque.getState(false);
-        if (!(estado instanceof CreatureSpawner spawner)) {
-            return;
+ 
+        // La jaula es solo decorativa: el spawn vanilla se cancela siempre y
+        // quien genera el MythicMob es la tarea de EscuchaSpawners.
+        BlockState estado = bloque.getState();
+        if (estado instanceof CreatureSpawner spawner) {
+            spawner.setSpawnedType(EntityType.ZOMBIE);
+            spawner.setRequiredPlayerRange(marcador.rangoJugador);
+            spawner.update(true, false);
         }
-        // Tipo base: el spawn real lo sustituye EscuchaSpawners por el MythicMob.
-        spawner.setSpawnedType(EntityType.ZOMBIE);
-        spawner.setDelay(marcador.delayMinimo);
-        spawner.setMinSpawnDelay(marcador.delayMinimo);
-        spawner.setMaxSpawnDelay(Math.max(marcador.delayMinimo, marcador.delayMaximo));
-        spawner.setSpawnCount(marcador.cantidadPorTanda);
-        spawner.setRequiredPlayerRange(marcador.rangoJugador);
-        spawner.setMaxNearbyEntities(marcador.maximoCercanos);
-        spawner.setSpawnRange(marcador.rangoSpawn);
-
-        spawner.getPersistentDataContainer().set(plugin.claveMob(), PersistentDataType.STRING, marcador.mob);
-        spawner.getPersistentDataContainer().set(plugin.claveNivel(), PersistentDataType.INTEGER, marcador.nivel);
-        spawner.update(true, false);
+ 
+        plugin.spawners().registrar(bloque, marcador);
     }
 }
+ 
